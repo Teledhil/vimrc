@@ -4,10 +4,12 @@ filetype off
 set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
 Plugin 'gmarik/vundle'
-Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'bling/vim-airline'
+Plugin 'tpope/vim-fugitive'
 Plugin 'kien/ctrlp.vim'
 Plugin 'klen/python-mode'
 Plugin 'scrooloose/syntastic'
+Plugin 'scrooloose/nerdtree'
 " Plugins for snipmate
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
@@ -21,6 +23,9 @@ syntax on
 
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
+
+" Hide buffers instead of closing them
+:set hidden
 
 " Move from tab to tab
 map <Leader>[ <esc>:tabprevious<CR> " Go to previous tab
@@ -128,15 +133,15 @@ set nobackup
 set nowritebackup
 set noswapfile
 
-set scrolloff=3     " Keep at least 3 lines above/below
+set scrolloff=3     " Keep at least 3 lines above/below cursor
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Options for powerline plugin
+" Options for syntastic plugin
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set laststatus=2
-set noshowmode
-set t_Co=256 
-let g:Powerline_symbols = 'fancy'
+let g:syntastic_python_checkers = ['pylint']  " Tell syntastic to not check python
+                                        " since pymode plugin already does that
+                                        
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -146,26 +151,21 @@ let g:ctrlp_map = '<c-p>'   " Change the default mapping and the default
 let g:ctrlp_cmd = 'CtrlP'   " command to invoke CtrlP
 
 let g:ctrlp_working_path_mode = 'ra'    " CtrlP will set its local working
-                                        " directory according to this variable
-                                        "
-                                        " c the directory of the current file.
-                                        "
-                                        " r the nearest ancestor that
-                                        "   contains one of these directories 
-                                        "   or files: .git, .hg, .svn, .bzr, 
-                                        "   _darcs, and your own root markers 
-                                        "   defined with the 
-                                        "   g:ctrlp_root_markers option.
-                                        " 
-                                        " a like 'c', but only applies when the
-                                        "   current working directory outside 
-                                        "   of CtrlP isn't a direct ancestor of
-                                        "   the directory of the current file.
+"                                         directory according to this variable
+"
+" c the directory of the current file.
+"
+" r the nearest ancestor that contains one of these directories or files: 
+"   .git, .hg, .svn, .bzr, _darcs, and your own root markers defined with the 
+"   g:ctrlp_root_markers option.
+" 
+" a like 'c', but only applies when the current working directory outside 
+"   of CtrlP isn't a direct ancestor of the directory of the current file.
 
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*.pyc  " Exclude files or 
                                                     " directories
 
-let g:ctrlp_user_command = 'find %s -type f'    " Specify an external tool to
+" let g:ctrlp_user_command = 'find %s -type f'    " Specify an external tool to
                                                 " use for listing files instead
                                                 " of using Vim's globpath().
                                                 " Use %s in place of the target
@@ -174,8 +174,25 @@ let g:ctrlp_user_command = 'find %s -type f'    " Specify an external tool to
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CScope
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 if has('cscope')
-    set cscopetag cscopeverbose
+    " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
+    set cscopetag
+
+    " check cscope for definition of a symbol before checking ctags: set to 1
+    " if you want the reverse search order.
+    set csto=0
+
+    " add any cscope database in current directory
+    if filereadable("cscope.out")
+        cs add cscope.out
+    " else add the database pointed to by environment variable 
+    elseif $CSCOPE_DB != ""
+        cs add $CSCOPE_DB
+    endif
+
+    " show msg when any other cscope db added
+    set cscopeverbose
 
     if has('quickfix')
         set cscopequickfix=s-,c-,d-,i-,t-,e-
@@ -185,6 +202,8 @@ if has('cscope')
         \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs add'  : 'csa')
     cnoreabbrev <expr> csf
         \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs find' : 'csf')
+    cnoreabbrev <expr> scsf
+        \ ((getcmdtype() == ':' && getcmdpos() <= 5)? 'scs find' : 'scsf')
     cnoreabbrev <expr> csk
         \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs kill' : 'csk')
     cnoreabbrev <expr> csr
@@ -194,23 +213,53 @@ if has('cscope')
     cnoreabbrev <expr> csh
         \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs help' : 'csh')
 
-    command -nargs=0 Cscope cs add cscope.out .t
+    " The following maps all invoke one of the following cscope search types:
+    "
+    "   's'   symbol: find all references to the token under cursor
+    "   'g'   global: find global definition(s) of the token under cursor
+    "   'c'   calls:  find all calls to the function name under cursor
+    "   't'   text:   find all instances of the text under cursor
+    "   'e'   egrep:  egrep search for the word under cursor
+    "   'f'   file:   open the filename under cursor
+    "   'i'   includes: find files that include the filename under cursor
+    "   'd'   called: find functions that function under cursor calls
+    nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
+    nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
 endif
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " python-mode
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:pymode_indent = 1                                 " Enable PEP8 indent
+let g:pymode_folding = 1                                " Enable folding
 let g:pymode_rope_goto_definition_bind = '<Leader>g'
-let g:pymode_rope_goto_definition_cmd = 'vnew'
-let ropevim_enable_shortcuts = 1
-let g:pymode_rope_goto_def_newwin = 'vnew'
-let g:pymode_rope_extended_complete = 1
-let g:pymode_breakpoint = 0
-let g:pymode_syntax = 1
+let g:pymode_rope_goto_definition_cmd = 'new'           " Open window with def
+
+" let ropevim_enable_shortcuts = 1     https://github.com/python-rope/ropevim
+
+let g:pymode_syntax = 1 
 let g:pymode_syntax_builtin_objs = 0
 let g:pymode_syntax_builtin_funcs = 0
-map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
+
+let g:pymode_lint = 0   " Turn off code checking, syntastic does this better
+" let g:pymode_lint_on_fly = 1    " Check code when editing.
+" let g:pymode_lint_message = 1   " Show error message if cursor at error line.
+" let g:pymode_lint_checkers = ['pylint'] " lint commands to be used
+
+" To add a breakpoint at cursor position
+let g:pymode_breakpoint = 1                 " Enable breakpoint insertions
+let g:pymode_breakpoint_bind = '<leader>b'  " Bind key
+let g:pymode_breakpoint_cmd = ''    " breakpoint command (leave empty for
+                                    " automatic detection)
+" If the above doesn't work, uncomment next line:
+"map <Leader>b Oimport pdb; pdb.set_trace() # BREAKPOINT<C-c>
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -218,3 +267,19 @@ map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <leader>l <ESC>:TagbarToggle<cr>
 imap <leader>l <ESC>:TagbarToggle<cr>i
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" NERDTree
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <leader>n <ESC>:NERDTreeToggle<cr>
+imap <leader>n <ESC>:NERDTreeToggle<cr>i
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" airline
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:airline#extensions#tabline#enabled = 1
+set laststatus=2
+set noshowmode
+set t_Co=256 
+let g:Powerline_symbols = 'fancy'
+let g:airline#extensions#branch#empty_message = 'no branch'
