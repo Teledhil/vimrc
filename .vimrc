@@ -3,13 +3,14 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
+" Add plugins below this line
 Plugin 'gmarik/vundle'
 Plugin 'bling/vim-airline'
-Plugin 'tpope/vim-fugitive'
-Plugin 'kien/ctrlp.vim'
-Plugin 'klen/python-mode'
-Plugin 'scrooloose/syntastic'
-Plugin 'scrooloose/nerdtree'
+Plugin 'tpope/vim-fugitive'   " Git wrapper. Recommended with airline
+Plugin 'kien/ctrlp.vim'       " File browser
+Plugin 'klen/python-mode'     " For Python development
+Plugin 'scrooloose/syntastic' " Syntax analyzer
+Plugin 'scrooloose/nerdtree'  " File browser
 " Plugins for snipmate
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
@@ -17,33 +18,46 @@ Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets' " This one is optional
 " End of snipmate plugins
 Plugin 'majutsushi/tagbar'
-" All plugins must be added before the following line
+" Add plugins above this line
 filetype plugin indent on
 syntax on
 
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
 
-" Hide buffers instead of closing them
+" Hide buffers instead of closing them when closing the window they are in
 :set hidden
 
-" Move from tab to tab
-map <Leader>[ <esc>:tabprevious<CR> " Go to previous tab
-map <Leader>] <esc>:tabnext<CR>     " Go to next tab
+" Remap leader key
+let mapleader=","
 
-" Move between windows
+" Tabs navigation
+" ===============
+" Go to previous tab
+map <Leader>[ <esc>:tabprevious<CR>
+" Go to next tab
+map <Leader>] <esc>:tabnext<CR>
+
+" Windows navigation
+" ==================
 map <c-h> <c-w>h
 map <c-j> <c-w>j
 map <c-k> <c-w>k
 map <c-l> <c-w>l
 
-map <Leader>w <esc>:w<CR>           " Save file
-map <Leader>q <esc>:q<CR>           " Close file
+" Save file
+map <Leader>w <esc>:w<CR>
+" Close file
+map <Leader>q <esc>:q<CR>
 
-vnoremap <Leader>s :sort<CR>    " Sort selected lines
+" Sort selected lines
+vnoremap <Leader>s :sort<CR>
 
 " Indentation
+" ===========
+" Indent 1 level to the <<left<< selected code in visual mode
 vnoremap < <gv
+" Indent 1 level to the >>right>> selected code in visual mode
 vnoremap > >gv
 
 set tabstop=4		" Number of spaces that <Tab> in the file counts for
@@ -113,7 +127,8 @@ set formatoptions=c,q,r,t   " This is the sequence of letters which describes
                     " t         Auto-wrap text using textwidth (does not apply
                     "           to comments)
 
-vmap Q gq           " Shortcuts to format
+" Shortcuts to format
+vmap Q gq
 nmap Q gqap
 
 set ruler           " Show the line and column number of the cursor position,
@@ -139,8 +154,8 @@ set scrolloff=3     " Keep at least 3 lines above/below cursor
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Options for syntastic plugin
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:syntastic_python_checkers = ['pylint']  " Tell syntastic to not check python
-                                        " since pymode plugin already does that
+" Tell syntastic check python with pylint instead of pep8(default)
+let g:syntastic_python_checkers = ['pylint']
                                         
 
 
@@ -162,9 +177,10 @@ let g:ctrlp_working_path_mode = 'ra'    " CtrlP will set its local working
 " a like 'c', but only applies when the current working directory outside 
 "   of CtrlP isn't a direct ancestor of the directory of the current file.
 
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*.pyc  " Exclude files or 
-                                                    " directories
+" Exclude files or directories
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*.pyc,*/build_scons/*  
 
+" ctrlp_user_command is NOT compatible with wildignore. Don't uncomment.
 " let g:ctrlp_user_command = 'find %s -type f'    " Specify an external tool to
                                                 " use for listing files instead
                                                 " of using Vim's globpath().
@@ -231,6 +247,12 @@ if has('cscope')
     nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
     nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
     nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
+
+    " go to next match
+    map <C-@>n <ESC>:cnext<CR>
+    " go to previous match
+    map <C-@>p <ESC>:cprev<CR>
+
 endif
 
 
@@ -239,8 +261,8 @@ endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:pymode_indent = 1                                 " Enable PEP8 indent
 let g:pymode_folding = 1                                " Enable folding
-let g:pymode_rope_goto_definition_bind = '<Leader>g'
-let g:pymode_rope_goto_definition_cmd = 'new'           " Open window with def
+let g:pymode_rope_goto_definition_bind = '<Leader>g'    "
+let g:pymode_rope_goto_definition_cmd = 'new'          " Open window with def
 
 " let ropevim_enable_shortcuts = 1     https://github.com/python-rope/ropevim
 
@@ -249,9 +271,9 @@ let g:pymode_syntax_builtin_objs = 0
 let g:pymode_syntax_builtin_funcs = 0
 
 let g:pymode_lint = 0   " Turn off code checking, syntastic does this better
-" let g:pymode_lint_on_fly = 1    " Check code when editing.
-" let g:pymode_lint_message = 1   " Show error message if cursor at error line.
-" let g:pymode_lint_checkers = ['pylint'] " lint commands to be used
+let g:pymode_lint_on_fly = 1                        " Check code when editing.
+let g:pymode_lint_message = 1   " Show error message if cursor at error line.
+let g:pymode_lint_checkers = ['pylint'] " lint commands to be used
 
 " To add a breakpoint at cursor position
 let g:pymode_breakpoint = 1                 " Enable breakpoint insertions
@@ -283,3 +305,6 @@ set noshowmode
 set t_Co=256 
 let g:Powerline_symbols = 'fancy'
 let g:airline#extensions#branch#empty_message = 'no branch'
+
+" disable detection of whitespace errors.
+let g:airline#extensions#whitespace#enabled = 0
