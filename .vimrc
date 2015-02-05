@@ -1,10 +1,10 @@
 " Vundle stuff
 set nocompatible
 filetype off
-set rtp+=~/.vim/bundle/vundle
+set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#rc()
 " Add plugins below this line
-Plugin 'gmarik/vundle'
+Plugin 'gmarik/Vundle.vim'
 Plugin 'bling/vim-airline'
 Plugin 'tpope/vim-fugitive'   " Git wrapper. Recommended with airline
 Plugin 'kien/ctrlp.vim'       " File browser
