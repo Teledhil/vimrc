@@ -17,7 +17,7 @@ Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets' " This one is optional
 " End of snipmate plugins
-Plugin 'vim-scripts/UltiSnips'
+Plugin 'SirVer/ultisnips'
 Plugin 'Rip-Rip/clang_complete'
 Plugin 'ervandew/supertab'
 Plugin 'majutsushi/tagbar'
