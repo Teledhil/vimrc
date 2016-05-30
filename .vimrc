@@ -1,15 +1,15 @@
 " Vundle stuff
 set nocompatible
 filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
 " Add plugins below this line
-Plugin 'gmarik/Vundle.vim'
+Plugin 'gmarik/vundle'
 Plugin 'bling/vim-airline'
 Plugin 'tpope/vim-fugitive'   " Git wrapper. Recommended with airline
 Plugin 'kien/ctrlp.vim'       " File browser
 Plugin 'klen/python-mode'     " For Python development
-Plugin 'scrooloose/syntastic' " Syntax analyzer
+"Plugin 'scrooloose/syntastic' " Syntax analyzer
 Plugin 'scrooloose/nerdtree'  " File browser
 " Plugins for snipmate
 Plugin 'MarcWeber/vim-addon-mw-utils'
@@ -17,13 +17,23 @@ Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets' " This one is optional
 " End of snipmate plugins
+Plugin 'vim-scripts/UltiSnips'
+Plugin 'Rip-Rip/clang_complete'
+Plugin 'ervandew/supertab'
 Plugin 'majutsushi/tagbar'
+" Support for perl
+Plugin 'vim-perl/vim-perl'
+" GDB inside vim
+" Plugin 'vim-scripts/Conque-GDB'
 " Add plugins above this line
 filetype plugin indent on
 syntax on
 
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
+
+" Auto trim files on saving
+autocmd FileType c,cpp,python autocmd BufWritePre <buffer> :%s/\s\+$//e
 
 " Hide buffers instead of closing them when closing the window they are in
 :set hidden
@@ -60,11 +70,11 @@ vnoremap < <gv
 " Indent 1 level to the >>right>> selected code in visual mode
 vnoremap > >gv
 
-set tabstop=4		" Number of spaces that <Tab> in the file counts for
+set tabstop=2		" Number of spaces that <Tab> in the file counts for
 
-set shiftwidth=4	" Number of spaces to use for each step of (auto)indent
+set shiftwidth=2	" Number of spaces to use for each step of (auto)indent
 
-set softtabstop=4   " Number of spaces that a <Tab> counts for while performing
+set softtabstop=2   " Number of spaces that a <Tab> counts for while performing
                     " editing operations, like inserting a <Tab> or using <BS>
 
 set shiftround      " Round indent to multiple of 'shiftwidth'. Applies to '>'
@@ -111,8 +121,10 @@ set autoindent		" Copy indent from current line when starting a new line
 set textwidth=79	" Maximum width of text that is being inserted. A longer
 					" line will be broken after white space to get this width
 
-set colorcolumn=+1  " Print color column at position 'textwidth'+1 
-highlight ColorColumn ctermbg=233
+if exists("&colorcolumn")
+  set colorcolumn=+1  " Print color column at position 'textwidth'+1 
+  highlight ColorColumn ctermbg=233
+endif
 
 set formatoptions=c,q,r,t   " This is the sequence of letters which describes
                             " how automatic formatting is to be done.
@@ -141,7 +153,7 @@ set background=dark " When set to 'dark', Vim will try to use colors that look
 
 set history=700     " Remember last n commands
 
-set undolevels=700  " Remember last n actions so you can undo them
+set undolevels=100  " Remember last n actions so you can undo them
 
 " Disable backups, swaps
 set nobackup
@@ -241,12 +253,14 @@ if has('cscope')
     "   'd'   called: find functions that function under cursor calls
     nmap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR>
     nmap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <Leader><space> :scs find g <C-R>=expand("<cword>")<CR><CR>
     nmap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR>
     nmap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR>
     nmap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR>
     nmap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
     nmap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
     nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-@>x :lol
 
     " go to next match
     map <C-@>n <ESC>:cnext<CR>
@@ -308,3 +322,25 @@ let g:airline#extensions#branch#empty_message = 'no branch'
 
 " disable detection of whitespace errors.
 let g:airline#extensions#whitespace#enabled = 0
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" fugitive
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap :blame<CR> :tab split<CR>:Gblame<CR>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" XML Folding
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:xml_syntax_folding=1
+au FileType xml setlocal foldmethod=syntax
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""  
+" Autocompletion of C++                                                         
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""  
+set pumheight=10             " so the complete menu doesn't get too big         
+set completeopt=menu,longest " menu, menuone, longest and preview               
+let g:SuperTabDefaultCompletionType='context'                                   
+" let g:clang_library_path=''
+let g:clang_complete_auto=0  " I can start the autocompletion myself, thanks..  
+let g:clang_snippets=1       " use a snippet engine for placeholders            
+let g:clang_snippets_engine='ultisnips'                   " automatically select and insert the first matchu
