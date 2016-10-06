@@ -126,7 +126,7 @@ if exists("&colorcolumn")
   highlight ColorColumn ctermbg=233
 endif
 
-set formatoptions=c,q,r,t   " This is the sequence of letters which describes
+set formatoptions=c,q,r   " This is the sequence of letters which describes
                             " how automatic formatting is to be done.
                     "
                     " letter    meaning when present in 'formatoptions'
