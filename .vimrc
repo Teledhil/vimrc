@@ -23,6 +23,8 @@ Plugin 'ervandew/supertab'
 Plugin 'majutsushi/tagbar'
 " Support for perl
 Plugin 'vim-perl/vim-perl'
+" Go plugin
+Plugin 'fatih/vim-go'
 " GDB inside vim
 " Plugin 'vim-scripts/Conque-GDB'
 " Add plugins above this line
@@ -343,3 +345,15 @@ let g:SuperTabDefaultCompletionType='context'
 let g:clang_complete_auto=0  " I can start the autocompletion myself, thanks..  
 let g:clang_snippets=1       " use a snippet engine for placeholders            
 let g:clang_snippets_engine='ultisnips'                   " automatically select and insert the first matchu
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" go
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_types = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+" Enable goimports to automatically insert import paths instead of gofmt:
+let g:go_fmt_command = "goimports"
