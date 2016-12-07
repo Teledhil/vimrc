@@ -179,6 +179,9 @@ let g:syntastic_python_checkers = ['pylint']
 let g:ctrlp_map = '<c-p>'   " Change the default mapping and the default
 let g:ctrlp_cmd = 'CtrlP'   " command to invoke CtrlP
 
+let g:ctrlp_max_files=20000 " Maximum number of files indexed
+                            " Run :CtrlPClearAllCaches to refresh
+
 let g:ctrlp_working_path_mode = 'ra'    " CtrlP will set its local working
 "                                         directory according to this variable
 "
