@@ -205,74 +205,9 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*.pyc,*/build_scons/*
                                                 " directory.
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" CScope
+" ctags
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-if has('cscope')
-    " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
-    set cscopetag
-
-    " check cscope for definition of a symbol before checking ctags: set to 1
-    " if you want the reverse search order.
-    set csto=0
-
-    " add any cscope database in current directory
-    if filereadable("cscope.out")
-        cs add cscope.out
-    " else add the database pointed to by environment variable 
-    elseif $CSCOPE_DB != ""
-        cs add $CSCOPE_DB
-    endif
-
-    " show msg when any other cscope db added
-    set cscopeverbose
-
-    if has('quickfix')
-        set cscopequickfix=s-,c-,d-,i-,t-,e-
-    endif
-
-    cnoreabbrev <expr> csa
-        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs add'  : 'csa')
-    cnoreabbrev <expr> csf
-        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs find' : 'csf')
-    cnoreabbrev <expr> scsf
-        \ ((getcmdtype() == ':' && getcmdpos() <= 5)? 'scs find' : 'scsf')
-    cnoreabbrev <expr> csk
-        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs kill' : 'csk')
-    cnoreabbrev <expr> csr
-        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs reset' : 'csr')
-    cnoreabbrev <expr> css
-        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs show' : 'css')
-    cnoreabbrev <expr> csh
-        \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs help' : 'csh')
-
-    " The following maps all invoke one of the following cscope search types:
-    "
-    "   's'   symbol: find all references to the token under cursor
-    "   'g'   global: find global definition(s) of the token under cursor
-    "   'c'   calls:  find all calls to the function name under cursor
-    "   't'   text:   find all instances of the text under cursor
-    "   'e'   egrep:  egrep search for the word under cursor
-    "   'f'   file:   open the filename under cursor
-    "   'i'   includes: find files that include the filename under cursor
-    "   'd'   called: find functions that function under cursor calls
-    nmap <Leader><space>s :scs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader><space>g :scs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader><space>c :scs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader><space>t :scs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader><space>e :scs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader><space>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <Leader><space>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <Leader><space>d :scs find d <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader><space>x :lol
-
-    " go to next match
-    map <C-@>n <ESC>:cnext<CR>
-    " go to previous match
-    map <C-@>p <ESC>:cprev<CR>
-
-endif
-
+map <C-@> :exec("tag ".expand("<cword>"))<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " python-mode
@@ -347,7 +282,8 @@ let g:SuperTabDefaultCompletionType='context'
 " let g:clang_library_path=''
 let g:clang_complete_auto=0  " I can start the autocompletion myself, thanks..  
 let g:clang_snippets=1       " use a snippet engine for placeholders            
-let g:clang_snippets_engine='ultisnips'                   " automatically select and insert the first matchu
+let g:clang_snippets_engine='ultisnips'                                         
+let g:clang_auto_select=2    " automatically select and insert the first matchu
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " go
