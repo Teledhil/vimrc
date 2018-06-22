@@ -239,6 +239,10 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*.pyc,*/build_scons/*
 " ctags
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <C-@> :exec("tag ".expand("<cword>"))<CR>
+noremap <Leader><space> <C-]>                   " Another mapping for macOS
+                                                " because Ctrl+Space is used to
+                                                " switch keyboard languages.
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " python-mode
