@@ -61,6 +61,18 @@ map <c-j> <c-w>j
 map <c-k> <c-w>k
 map <c-l> <c-w>l
 
+" Terminal mode
+" =============
+if has('terminal')
+  tnoremap <Esc> <C-W>N                  " Press <Esc> to switch to
+  set notimeout ttimeout timeoutlen=100  " Terminal-Normal mode.
+
+  tnoremap <c-h> <C-W>N<c-w>h
+  tnoremap <c-j> <C-W>N<c-w>j
+  tnoremap <c-k> <C-W>N<c-w>k
+  tnoremap <c-l> <C-W>N<c-w>k
+endif " has('terminal')
+
 " Save file
 map <Leader>w <esc>:w<CR>
 " Close file
