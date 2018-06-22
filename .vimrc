@@ -27,6 +27,10 @@ Plugin 'vim-perl/vim-perl'
 Plugin 'fatih/vim-go'
 " GDB inside vim
 " Plugin 'vim-scripts/Conque-GDB'
+" VIM theme deep-star
+Plugin 'tyrannicaltoucan/vim-deep-space'
+" Solarized theme
+Plugin 'altercation/vim-colors-solarized'
 " Add plugins above this line
 filetype plugin indent on
 syntax on
@@ -152,6 +156,8 @@ set background=dark " When set to 'dark', Vim will try to use colors that look
                     " good on a dark background. When set to 'light', vim will
                     " try to use colors that look good on a light background.
                     " Any other value is illegal
+colorscheme solarized
+let g:solarized_termtrans = 1
 
 set history=700     " Remember last n commands
 
