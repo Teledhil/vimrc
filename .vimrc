@@ -9,7 +9,7 @@ Plugin 'bling/vim-airline'
 Plugin 'tpope/vim-fugitive'   " Git wrapper. Recommended with airline
 Plugin 'kien/ctrlp.vim'       " File browser
 Plugin 'klen/python-mode'     " For Python development
-"Plugin 'scrooloose/syntastic' " Syntax analyzer
+Plugin 'scrooloose/syntastic' " Syntax analyzer
 Plugin 'scrooloose/nerdtree'  " File browser
 " Plugins for snipmate
 Plugin 'MarcWeber/vim-addon-mw-utils'
@@ -170,8 +170,21 @@ set scrolloff=3     " Keep at least 3 lines above/below cursor
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tell syntastic check python with pylint instead of pep8(default)
 let g:syntastic_python_checkers = ['pylint']
-                                        
+let g:syntastic_cpp_compiler_options = ' -std=c++11 '
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
 
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_auto_jump = 0
+                                        
+let g:syntastic_error_symbol = '❌'
+let g:syntastic_style_error_symbol = '⁉️'
+let g:syntastic_warning_symbol = '⚠️'
+let g:syntastic_style_warning_symbol = '💩'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Options for Ctrlp plugin
@@ -282,8 +295,7 @@ let g:SuperTabDefaultCompletionType='context'
 " let g:clang_library_path=''
 let g:clang_complete_auto=0  " I can start the autocompletion myself, thanks..  
 let g:clang_snippets=1       " use a snippet engine for placeholders            
-let g:clang_snippets_engine='ultisnips'                                         
-let g:clang_auto_select=2    " automatically select and insert the first matchu
+let g:clang_snippets_engine='ultisnips'                   " automatically select and insert the first matchu
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " go
