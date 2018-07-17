@@ -1,10 +1,10 @@
 " Vundle stuff
 set nocompatible
 filetype off
-set rtp+=~/.vim/bundle/vundle
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 " Add plugins below this line
-Plugin 'gmarik/vundle'
+Plugin 'VundleVim/Vundle.vim'
 Plugin 'bling/vim-airline'
 Plugin 'tpope/vim-fugitive'   " Git wrapper. Recommended with airline
 Plugin 'kien/ctrlp.vim'       " File browser
@@ -32,6 +32,7 @@ Plugin 'tyrannicaltoucan/vim-deep-space'
 " Solarized theme
 Plugin 'altercation/vim-colors-solarized'
 " Add plugins above this line
+call vundle#end()
 filetype plugin indent on
 syntax on
 
