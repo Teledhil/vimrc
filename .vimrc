@@ -189,7 +189,8 @@ set scrolloff=3     " Keep at least 3 lines above/below cursor
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tell syntastic check python with pylint instead of pep8(default)
 let g:syntastic_python_checkers = ['pylint']
-let g:syntastic_cpp_compiler_options = ' -std=c++11 '
+let g:syntastic_cpp_compiler_options = ' -std=c++17 '
+let g:syntastic_cpp_config_file = '.syntastic_includes_file_'
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
