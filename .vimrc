@@ -8,7 +8,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'bling/vim-airline'
 Plugin 'tpope/vim-fugitive'   " Git wrapper. Recommended with airline
 Plugin 'kien/ctrlp.vim'       " File browser
-Plugin 'klen/python-mode'     " For Python development
+Plugin 'python-mode/python-mode'     " For Python development
 Plugin 'scrooloose/syntastic' " Syntax analyzer
 Plugin 'scrooloose/nerdtree'  " File browser
 " Plugins for snipmate
