@@ -25,6 +25,8 @@ Plugin 'majutsushi/tagbar'
 Plugin 'vim-perl/vim-perl'
 " Go plugin
 Plugin 'fatih/vim-go'
+" Dart / Flutter
+Plugin 'dart-lang/dart-vim-plugin'
 " GDB inside vim
 " Plugin 'vim-scripts/Conque-GDB'
 " VIM theme deep-star
@@ -189,8 +191,14 @@ set scrolloff=3     " Keep at least 3 lines above/below cursor
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tell syntastic check python with pylint instead of pep8(default)
 let g:syntastic_python_checkers = ['pylint']
+
 let g:syntastic_cpp_compiler_options = ' -std=c++17 '
 let g:syntastic_cpp_config_file = '.syntastic_includes_file_'
+
+" Disable dartanalyzer because is very slow:
+" https://github.com/dart-lang/dart-vim-plugin/issues/24
+let g:loaded_syntastic_dart_dartanalyzer_checker = 0
+
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
@@ -332,3 +340,9 @@ let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 " Enable goimports to automatically insert import paths instead of gofmt:
 let g:go_fmt_command = "goimports"
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" dart
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let dart_style_guide = 2    " Enable Dart style guide syntax (2-space indentation)
+let dart_format_on_save = 1 " Enable DartFmt execution on buffer save
