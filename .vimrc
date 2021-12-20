@@ -1,48 +1,62 @@
-" Vundle stuff
-set nocompatible
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+" Specify a directory for plugins
+" - For Neovim: stdpath('data') . '/plugged'
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
+
 " Add plugins below this line
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'bling/vim-airline'
-Plugin 'tpope/vim-fugitive'   " Git wrapper. Recommended with airline
-Plugin 'kien/ctrlp.vim'       " File browser
-Plugin 'python-mode/python-mode'     " For Python development
-Plugin 'scrooloose/syntastic' " Syntax analyzer
-Plugin 'scrooloose/nerdtree'  " File browser
+Plug 'bling/vim-airline'
+Plug 'tpope/vim-fugitive'   " Git wrapper. Recommended with airline
+Plug 'ctrlpvim/ctrlp.vim'       " File browser
+"Plug 'python-mode/python-mode'     " For Python development
+"Plug 'vim-syntastic/syntastic' " Syntax analyzer
+"Plug 'scrooloose/nerdtree'  " File browser
 " Plugins for snipmate
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
-Plugin 'honza/vim-snippets' " This one is optional
+"Plug 'MarcWeber/vim-addon-mw-utils'
+"Plug 'tomtom/tlib_vim'
+"Plug 'garbas/vim-snipmate'
+"Plug 'honza/vim-snippets' " This one is optional
 " End of snipmate plugins
-Plugin 'SirVer/ultisnips'
-Plugin 'Rip-Rip/clang_complete'
-Plugin 'ervandew/supertab'
-Plugin 'majutsushi/tagbar'
+"Plug 'SirVer/ultisnips'
+"Plug 'Rip-Rip/clang_complete'
+let g:ycm_install = 'python3 ./install.py --clang-completer --rust-completer'
+Plug 'ycm-core/YouCompleteMe', { 'do': g:ycm_install }
+"Plug 'ervandew/supertab'
+Plug 'majutsushi/tagbar'
 " Support for perl
-Plugin 'vim-perl/vim-perl'
+"Plug 'vim-perl/vim-perl'
 " Go plugin
-Plugin 'fatih/vim-go'
+"Plug 'fatih/vim-go'
 " Dart / Flutter
-Plugin 'dart-lang/dart-vim-plugin'
+"Plug 'dart-lang/dart-vim-plugin'
 " GDB inside vim
-" Plugin 'vim-scripts/Conque-GDB'
+" Plug 'vim-scripts/Conque-GDB'
 " VIM theme deep-star
-Plugin 'tyrannicaltoucan/vim-deep-space'
+"Plug 'tyrannicaltoucan/vim-deep-space'
 " Solarized theme
-Plugin 'altercation/vim-colors-solarized'
+Plug 'altercation/vim-colors-solarized'
+" Reddit
+"Plug 'joshhartigan/vim-reddit'
+" Rust
+Plug 'rust-lang/rust.vim'
+
 " Add plugins above this line
-call vundle#end()
-filetype plugin indent on
-syntax on
+
+" Initialize plugin system
+call plug#end()
 
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
 
 " Auto trim files on saving
 autocmd FileType c,cpp,python autocmd BufWritePre <buffer> :%s/\s\+$//e
+
+" Auto format c++ on save
+function! FormatOnSave()
+  let l:formatdiff = 1
+  py3f /usr/share/vim/addons/syntax/clang-format.py
+  "py3f /opt/homebrew/Cellar/clang-format/13.0.0/share/clang/clang-format.py
+endfunction
+autocmd BufWritePre *.h,*.cc,*.cpp,*.c call FormatOnSave()
 
 " Hide buffers instead of closing them when closing the window they are in
 :set hidden
@@ -75,11 +89,6 @@ if has('terminal')
   tnoremap <c-k> <C-W>N<c-w>k
   tnoremap <c-l> <C-W>N<c-w>k
 endif " has('terminal')
-
-" Save file
-map <Leader>w <esc>:w<CR>
-" Close file
-map <Leader>q <esc>:q<CR>
 
 " Sort selected lines
 vnoremap <Leader>s :sort<CR>
@@ -185,34 +194,43 @@ set noswapfile
 
 set scrolloff=3     " Keep at least 3 lines above/below cursor
 
+" Visual mode
+" ===========
+" Replace currently selected text with default register
+" without yanking it.
+" ("_ is the __blackhole register__: When writing to this register, nothing
+"  happens. This can be used to delete text without affecting the normal
+"  registers. When reading from this register, nothing is returned. {not in
+"  Vi})"
+vnoremap p "_dP
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Options for syntastic plugin
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tell syntastic check python with pylint instead of pep8(default)
-let g:syntastic_python_checkers = ['pylint']
+"let g:syntastic_python_checkers = ['pylint']
 
-let g:syntastic_cpp_compiler_options = ' -std=c++17 '
-let g:syntastic_cpp_config_file = '.syntastic_includes_file_'
+"let g:syntastic_cpp_compiler_options = ' -std=c++17 '
+"let g:syntastic_cpp_config_file = '.syntastic_includes_file_'
 
 " Disable dartanalyzer because is very slow:
 " https://github.com/dart-lang/dart-vim-plugin/issues/24
-let g:loaded_syntastic_dart_dartanalyzer_checker = 0
+"let g:loaded_syntastic_dart_dartanalyzer_checker = 0
 
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_auto_jump = 0
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 0
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+"let g:syntastic_auto_jump = 0
                                         
-let g:syntastic_error_symbol = '❌'
-let g:syntastic_style_error_symbol = '⁉️'
-let g:syntastic_warning_symbol = '⚠️'
-let g:syntastic_style_warning_symbol = '💩'
+"let g:syntastic_error_symbol = '❌'
+"let g:syntastic_style_error_symbol = '⁉️'
+"let g:syntastic_warning_symbol = '⚠️'
+"let g:syntastic_style_warning_symbol = '💩'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Options for Ctrlp plugin
@@ -236,7 +254,7 @@ let g:ctrlp_working_path_mode = 'ra'    " CtrlP will set its local working
 "   of CtrlP isn't a direct ancestor of the directory of the current file.
 
 " Exclude files or directories
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*.pyc,*/build_scons/*  
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*.pyc,*/build_scons/*,*/target/*
 
 " ctrlp_user_command is NOT compatible with wildignore. Don't uncomment.
 " let g:ctrlp_user_command = 'find %s -type f'    " Specify an external tool to
@@ -244,12 +262,14 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.o,*.pyc,*/build_scons/*
                                                 " of using Vim's globpath().
                                                 " Use %s in place of the target
                                                 " directory.
+" Ignore files in .gitignore.
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ctags
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <C-@> :exec("tag ".expand("<cword>"))<CR>
-noremap <Leader><space> <C-]>                   " Another mapping for macOS
+"map <C-@> :exec("tag ".expand("<cword>"))<CR>
+"noremap <Leader><space> <C-]>                   " Another mapping for macOS
                                                 " because Ctrl+Space is used to
                                                 " switch keyboard languages.
 
@@ -257,26 +277,26 @@ noremap <Leader><space> <C-]>                   " Another mapping for macOS
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " python-mode
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:pymode_indent = 1                                 " Enable PEP8 indent
-let g:pymode_folding = 1                                " Enable folding
-let g:pymode_rope_goto_definition_bind = '<Leader>g'    "
-let g:pymode_rope_goto_definition_cmd = 'new'          " Open window with def
+"let g:pymode_indent = 1                                 " Enable PEP8 indent
+"let g:pymode_folding = 1                                " Enable folding
+"let g:pymode_rope_goto_definition_bind = '<Leader>g'    "
+"let g:pymode_rope_goto_definition_cmd = 'new'          " Open window with def
 
 " let ropevim_enable_shortcuts = 1     https://github.com/python-rope/ropevim
 
-let g:pymode_syntax = 1 
-let g:pymode_syntax_builtin_objs = 0
-let g:pymode_syntax_builtin_funcs = 0
+"let g:pymode_syntax = 1 
+"let g:pymode_syntax_builtin_objs = 0
+"let g:pymode_syntax_builtin_funcs = 0
 
-let g:pymode_lint = 0   " Turn off code checking, syntastic does this better
-let g:pymode_lint_on_fly = 1                        " Check code when editing.
-let g:pymode_lint_message = 1   " Show error message if cursor at error line.
-let g:pymode_lint_checkers = ['pylint'] " lint commands to be used
+"let g:pymode_lint = 0   " Turn off code checking, syntastic does this better
+"let g:pymode_lint_on_fly = 1                        " Check code when editing.
+"let g:pymode_lint_message = 1   " Show error message if cursor at error line.
+"let g:pymode_lint_checkers = ['pylint'] " lint commands to be used
 
 " To add a breakpoint at cursor position
-let g:pymode_breakpoint = 1                 " Enable breakpoint insertions
-let g:pymode_breakpoint_bind = '<leader>b'  " Bind key
-let g:pymode_breakpoint_cmd = ''    " breakpoint command (leave empty for
+"let g:pymode_breakpoint = 1                 " Enable breakpoint insertions
+"let g:pymode_breakpoint_bind = '<leader>b'  " Bind key
+"let g:pymode_breakpoint_cmd = ''    " breakpoint command (leave empty for
                                     " automatic detection)
 " If the above doesn't work, uncomment next line:
 "map <Leader>b Oimport pdb; pdb.set_trace() # BREAKPOINT<C-c>
@@ -291,8 +311,8 @@ imap <leader>l <ESC>:TagbarToggle<cr>i
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NERDTree
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <leader>n <ESC>:NERDTreeToggle<cr>
-imap <leader>n <ESC>:NERDTreeToggle<cr>i
+"nmap <leader>n <ESC>:NERDTreeToggle<cr>
+"imap <leader>n <ESC>:NERDTreeToggle<cr>i
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " airline
@@ -321,28 +341,32 @@ au FileType xml setlocal foldmethod=syntax
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""  
 " Autocompletion of C++                                                         
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""  
-set pumheight=10             " so the complete menu doesn't get too big         
-set completeopt=menu,longest " menu, menuone, longest and preview               
-let g:SuperTabDefaultCompletionType='context'                                   
-" let g:clang_library_path=''
-let g:clang_complete_auto=0  " I can start the autocompletion myself, thanks..  
-let g:clang_snippets=1       " use a snippet engine for placeholders            
-let g:clang_snippets_engine='ultisnips'                   " automatically select and insert the first matchu
+"set pumheight=10             " so the complete menu doesn't get too big         
+"set completeopt=menu,longest " menu, menuone, longest and preview               
+"let g:SuperTabDefaultCompletionType='context'                                   
+"let g:clang_library_path=''
+"let g:clang_library_path='/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib'
+"let g:clang_complete_auto=0  " I can start the autocompletion myself, thanks... 
+"let g:clang_snippets=1       " use a snippet engine for placeholders            
+
+"" automatically select and insert the first match
+"let g:clang_snippets_engine='ultisnips'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " go
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_types = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
+"let g:go_highlight_functions = 1
+"let g:go_highlight_methods = 1
+"let g:go_highlight_fields = 1
+"let g:go_highlight_types = 1
+"let g:go_highlight_operators = 1
+"let g:go_highlight_build_constraints = 1
+
 " Enable goimports to automatically insert import paths instead of gofmt:
-let g:go_fmt_command = "goimports"
+"let g:go_fmt_command = "goimports"
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " dart
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let dart_style_guide = 2    " Enable Dart style guide syntax (2-space indentation)
-let dart_format_on_save = 1 " Enable DartFmt execution on buffer save
+"let dart_style_guide = 2    " Enable Dart style guide syntax (2-space indentation)
+"let dart_format_on_save = 1 " Enable DartFmt execution on buffer save
