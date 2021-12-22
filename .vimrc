@@ -48,15 +48,17 @@ call plug#end()
 autocmd! bufwritepost .vimrc source %
 
 " Auto trim files on saving
-autocmd FileType c,cpp,python autocmd BufWritePre <buffer> :%s/\s\+$//e
+autocmd FileType c,cpp,glsl,python autocmd BufWritePre <buffer> :%s/\s\+$//e
 
 " Auto format c++ on save
 function! FormatOnSave()
   let l:formatdiff = 1
   py3f /usr/share/vim/addons/syntax/clang-format.py
-  "py3f /opt/homebrew/Cellar/clang-format/13.0.0/share/clang/clang-format.py
 endfunction
-autocmd BufWritePre *.h,*.cc,*.cpp,*.c call FormatOnSave()
+autocmd BufWritePre *.h,*.cc,*.cpp,*.c,*.glsl,*frag,*vert,*rgen,*rchit,*rmiss call FormatOnSave()
+
+" Display extra whitespace
+set list listchars=tab:»·,trail:·,nbsp:·
 
 " Hide buffers instead of closing them when closing the window they are in
 :set hidden
@@ -105,59 +107,59 @@ set tabstop=2		" Number of spaces that <Tab> in the file counts for
 set shiftwidth=2	" Number of spaces to use for each step of (auto)indent
 
 set softtabstop=2   " Number of spaces that a <Tab> counts for while performing
-                    " editing operations, like inserting a <Tab> or using <BS>
+                    " editing operations, like inserting a <Tab> or using <BS>.
 
 set shiftround      " Round indent to multiple of 'shiftwidth'. Applies to '>'
-                    " and '<' commands
+                    " and '<' commands.
 
-set expandtab		" Use the apropiate number of spaces to insert a <Tab>.
-					" Spaces are used in indents with the '>' and '<' commands
-					" and when 'autoindent' is on. To insert a real tab when
-					" 'expandtab' is on, use Ctrl+V <Tab>
+set expandtab     " Use the apropiate number of spaces to insert a <Tab>.
+                  " Spaces are used in indents with the '>' and '<' commands
+                  " and when 'autoindent' is on. To insert a real tab when
+                  " 'expandtab' is on, use Ctrl+V <Tab>.
 
-set smarttab		" When on, a <Tab> in front of a line inserts blanks
-					" according to 'shiftwidth'. 'tabstop' is used in other
-					" places. A <BS> will delete a 'shiftwidth' worth of space
-					" at the start of the line
+set smarttab      " When on, a <Tab> in front of a line inserts blanks
+                  " according to 'shiftwidth'. 'tabstop' is used in other
+                  " places. A <BS> will delete a 'shiftwidth' worth of space
+                  " at the start of the line.
 
-set showcmd			" Show (partial) command in status line
+set showcmd       " Show (partial) command in status line.
 
-set number			" Show line numbers
+set number        " Show line numbers.
 
-set showmatch		" When a bracket is inserted, briefly jump to the matching
-					" one. The jump is only done if the match can be seen on the
-					" screen. The time to show the match can be set with
-					" 'matchtime'
+set showmatch     " When a bracket is inserted, briefly jump to the matching
+                  " one. The jump is only done if the match can be seen on the
+                  " screen. The time to show the match can be set with
+                  " 'matchtime'.
 
-set hlsearch		" When there is a previous search pattern, highlight all
-					" its matches
+set hlsearch      " When there is a previous search pattern, highlight all
+                  " its matches.
 
-set incsearch		" While typing a search command, show immediately where the
-					" so far typed matches
+set incsearch     " While typing a search command, show immediately where the
+                  " so far typed matches.
 
-set ignorecase		" Ignore case in search patterns
+set ignorecase    " Ignore case in search patterns.
 
-set smartcase		" Override the 'ignorecase' option if search pattern
-					" contains upper case characters
+set smartcase     " Override the 'ignorecase' option if search pattern
+                  " contains upper case characters.
 
-set backspace=2		" Influences the working of <BS>, <Del>, Ctrl+W and Ctrl+U
-					" in Insert mode. This is a list of items, separated by
-					" commas. Each item allows a way to backspace over something
+set backspace=2   " Influences the working of <BS>, <Del>, Ctrl+W and Ctrl+U
+                  " in Insert mode. This is a list of items, separated by
+                  " commas. Each item allows a way to backspace over something.
 
-set autoindent		" Copy indent from current line when starting a new line
-					" (typing <CR> in Insert mode or when the 'o' or 'O'
-					" command)
+set autoindent    " Copy indent from current line when starting a new line
+                  " (typing <CR> in Insert mode or when the 'o' or 'O'
+                  " command).
 
-set textwidth=79	" Maximum width of text that is being inserted. A longer
-					" line will be broken after white space to get this width
+set textwidth=79    " Maximum width of text that is being inserted. A longer
+                    " line will be broken after white space to get this width.
 
 if exists("&colorcolumn")
-  set colorcolumn=+1  " Print color column at position 'textwidth'+1 
+  set colorcolumn=+1  " Print color column at position 'textwidth'+1
   highlight ColorColumn ctermbg=233
 endif
 
 set formatoptions=c,q,r   " This is the sequence of letters which describes
-                            " how automatic formatting is to be done.
+                          " how automatic formatting is to be done.
                     "
                     " letter    meaning when present in 'formatoptions'
                     " ------    ---------------------------------------
@@ -205,6 +207,12 @@ set scrolloff=3     " Keep at least 3 lines above/below cursor
 vnoremap p "_dP
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Options for YouCompleteMe plugin
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use a global config file
+"let g:ycm_global_ycm_extra_conf = "~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Options for syntastic plugin
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tell syntastic check python with pylint instead of pep8(default)
@@ -246,11 +254,11 @@ let g:ctrlp_working_path_mode = 'ra'    " CtrlP will set its local working
 "
 " c the directory of the current file.
 "
-" r the nearest ancestor that contains one of these directories or files: 
-"   .git, .hg, .svn, .bzr, _darcs, and your own root markers defined with the 
+" r the nearest ancestor that contains one of these directories or files:
+"   .git, .hg, .svn, .bzr, _darcs, and your own root markers defined with the
 "   g:ctrlp_root_markers option.
-" 
-" a like 'c', but only applies when the current working directory outside 
+"
+" a like 'c', but only applies when the current working directory outside
 "   of CtrlP isn't a direct ancestor of the directory of the current file.
 
 " Exclude files or directories
@@ -338,17 +346,18 @@ nnoremap :blame<CR> :tab split<CR>:Gblame<CR>
 let g:xml_syntax_folding=1
 au FileType xml setlocal foldmethod=syntax
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""  
-" Autocompletion of C++                                                         
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""  
-"set pumheight=10             " so the complete menu doesn't get too big         
-"set completeopt=menu,longest " menu, menuone, longest and preview               
-"let g:SuperTabDefaultCompletionType='context'                                   
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Autocompletion of C++
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"set pumheight=10             " so the complete menu doesn't get too big
+"set completeopt=menu,longest " menu, menuone, longest and preview
+"let g:SuperTabDefaultCompletionType='context'
 "let g:clang_library_path=''
 "let g:clang_library_path='/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib'
-"let g:clang_complete_auto=0  " I can start the autocompletion myself, thanks... 
-"let g:clang_snippets=1       " use a snippet engine for placeholders            
-
+"let g:clang_library_path='/usr/lib/llvm-10/lib/libclang.so'
+"let g:clang_complete_auto=0  " I can start the autocompletion myself, thanks.
+"let g:clang_snippets=1       " use a snippet engine for placeholders
+"
 "" automatically select and insert the first match
 "let g:clang_snippets_engine='ultisnips'
 
@@ -364,6 +373,12 @@ au FileType xml setlocal foldmethod=syntax
 
 " Enable goimports to automatically insert import paths instead of gofmt:
 "let g:go_fmt_command = "goimports"
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" clang-format
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>f :pyf /usr/share/vim/addons/syntax/clang-format.py<cr>
+imap <leader>f <c-o>:pyf /usr/share/vim/addons/syntax/clang-format.py<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " dart
